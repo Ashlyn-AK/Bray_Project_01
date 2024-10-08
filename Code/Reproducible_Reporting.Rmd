@@ -17,9 +17,6 @@ leadIQ <- read.csv("../DataRaw/lead-iq-01.csv")
 
 ```{r processing}
 new_file_name <- "../DataProcessed/lead-iq-processed.csv"
-if (any(leadIQ == 999, na.rm = TRUE)) {
-  leadIQ[leadIQ == 999] <- 99
-}
 write.csv(leadIQ, new_file_name, row.names = FALSE)
 ```
 
@@ -35,7 +32,7 @@ ggplot(leadIQ, aes(x = Smelter, y = IQ, fill = Smelter)) +
   theme_minimal() +
   theme(legend.position = "none")
 ```
-Figure 1 presents a box plot of IQ levels categorized by location status, specifically distance from the smelter. The graph indicates that the median IQ value for individuals living far from the smelter is higher than that of those living closer. However, there is considerable overlap between the IQR of the two groups, suggesting that there may not be a significant difference in IQ levels between them.
+Figure 1 is a box plot of IQ levels by location status as distance to the smelter. In this graph it is hard to see if there are differences between the groups due to the data point at approximately an IQ of 1000, which we know is not realistic due to the highest IQ's recorded ever being in the 300s. From what we can see it does appear the farther from the smelter has a slightly higher IQ but there is too much overlapping to gain a clear picture. 
 
 \newpage
 ## Formatted Table
@@ -59,6 +56,6 @@ kable(summary_table,
       caption = "Summary of IQ Levels by Location Status", 
       digits = 2)
 ```
-Table 1 indicates that individuals living farther from the smelter tend to have a higher mean IQ compared to those residing closer. However, the difference is minimal, and the standard deviation shows considerable overlap between the two groups.
+Table 1 reveals that individuals living farther from the smelter tend to have a higher mean IQ compared to those who reside closer. However, the presence of an outlier in the "far" group, as indicated by the first box plot, suggests that the mean might be influenced by extreme values. Therefore, it is more informative to examine the median, which is less affected by outliers.
 
-When examining the median and IQR, we find similar results as compared to looking at the mean and standard deviation. We observe that the group living farther still has a higher median IQ when compared to the computations found when the outlier was still included, but the difference is likely not significant due to the substantial overlap between the groups.
+Looking at the median and interquartile range (IQR), we observe that the far group still has a higher median IQ, although the difference compared to the near group is less pronounced than when considering the mean. 
