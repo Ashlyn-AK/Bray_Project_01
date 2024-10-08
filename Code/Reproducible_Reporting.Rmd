@@ -1,0 +1,61 @@
+---
+title: "Reproducible Reporting"
+author: "Ashlyn Bray"
+date: "2024-10-08"
+knit: "(function(inputFile, encoding){ out_dir <- \"../Reports\"; rmarkdown::render(inputFile,
+  output_format=\"word_document\", encoding=encoding, output_dir=out_dir)})"
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+opts_chunk$set(tidy = F)
+knitr::opts_chunk$set(echo = FALSE)
+leadIQ <- read.csv("../DataRaw/lead-iq-01.csv")
+```
+
+```{r processing}
+new_file_name <- "../DataProcessed/lead-iq-processed.csv"
+write.csv(leadIQ, new_file_name, row.names = FALSE)
+```
+
+## Graph showing IQ levels by location
+
+Figure 1
+```{r plot}
+ggplot(leadIQ, aes(x = Smelter, y = IQ, fill = Smelter)) +
+  geom_boxplot() +
+  labs(title = "IQ Levels by Location Status",
+       x = "Location Status",
+       y = "IQ Level") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+Figure 1 is a box plot of IQ levels by location status as distance to the smeleter. In this graph it is hard to see if there are differences between the groups due to the data point at approximately an IQ of 1000, which we know is not realistic due to the highest IQ's recorded ever being in the 300s. From what we can see it does appear the farther from the smelter has a slightly higher IQ but there is too much overlapping to gain a clear picture. 
+
+\newpage
+## Formatted Table
+
+```{r table}
+summary_table <- data.frame(
+  Location = c("Far", "Near"),
+  Mean_IQ = c(mean(leadIQ$IQ[leadIQ$Smelter == "Far"]), 
+              mean(leadIQ$IQ[leadIQ$Smelter == "Near"])),
+  SD_IQ = c(sd(leadIQ$IQ[leadIQ$Smelter == "Far"]), 
+            sd(leadIQ$IQ[leadIQ$Smelter == "Near"])),
+  Median_IQ = c(median(leadIQ$IQ[leadIQ$Smelter == "Far"]), 
+                median(leadIQ$IQ[leadIQ$Smelter == "Near"])),
+  Q1_IQ = c(quantile(leadIQ$IQ[leadIQ$Smelter == "Far"], 0.25, na.rm = TRUE), 
+             quantile(leadIQ$IQ[leadIQ$Smelter == "Near"], 0.25, na.rm = TRUE)),
+  Q3_IQ = c(quantile(leadIQ$IQ[leadIQ$Smelter == "Far"], 0.75, na.rm = TRUE), 
+             quantile(leadIQ$IQ[leadIQ$Smelter == "Near"], 0.75, na.rm = TRUE)))
+
+# Print the table using kable
+kable(summary_table, 
+      caption = "Summary of IQ Levels by Location Status", 
+      digits = 2)
+```
+Table 1 reveals that individuals living farther from the smelter tend to have a higher mean IQ compared to those who reside closer. However, the presence of an outlier in the "far" group, as indicated by the first box plot, suggests that the mean might be influenced by extreme values. Therefore, it is more informative to examine the median, which is less affected by outliers.
+
+Looking at the median and interquartile range (IQR), we observe that the far group still has a higher median IQ, although the difference compared to the near group is less pronounced than when considering the mean. 
